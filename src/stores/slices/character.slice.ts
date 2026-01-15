@@ -2,13 +2,20 @@ import type { StateCreator } from 'zustand';
 import type { Character, CharacterRole, CharacterAttributes, CharacterPresence } from '../../types';
 import { generateId } from '../../utils/id';
 
+export interface CreateCharacterOptions {
+  name: string;
+  role?: CharacterRole;
+  description?: string;
+  aliases?: string[];
+}
+
 export interface CharacterSlice {
   characters: Character[];
   characterPresences: CharacterPresence[];
   isLoadingCharacters: boolean;
 
   loadCharacters: (projectId: string) => Promise<void>;
-  createCharacter: (projectId: string, name: string, role?: CharacterRole) => Promise<Character>;
+  createCharacter: (projectId: string, options: CreateCharacterOptions) => Promise<Character>;
   updateCharacter: (id: string, updates: Partial<Character>) => void;
   deleteCharacter: (id: string) => Promise<void>;
   addCharacterAlias: (id: string, alias: string) => void;
@@ -32,15 +39,16 @@ export const createCharacterSlice: StateCreator<
     set({ isLoadingCharacters: false });
   },
 
-  createCharacter: async (projectId, name, role = 'supporting') => {
+  createCharacter: async (projectId, options) => {
+    const { name, role = 'supporting', description = '', aliases = [] } = options;
     const now = new Date();
     const character: Character = {
       id: generateId(),
       projectId,
       name,
-      aliases: [],
+      aliases,
       role,
-      description: '',
+      description,
       attributes: {},
       relationships: [],
       arc: null,

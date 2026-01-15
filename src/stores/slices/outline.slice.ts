@@ -2,6 +2,13 @@ import type { StateCreator } from 'zustand';
 import type { OutlineNode, OutlineNodeType, OutlineNodeStatus } from '../../types';
 import { generateId } from '../../utils/id';
 
+export interface CreateOutlineNodeOptions {
+  title: string;
+  type: OutlineNodeType;
+  parentId?: string | null;
+  description?: string;
+}
+
 export interface OutlineSlice {
   outlineNodes: OutlineNode[];
   isLoadingOutline: boolean;
@@ -9,9 +16,7 @@ export interface OutlineSlice {
   loadOutline: (projectId: string) => Promise<void>;
   createOutlineNode: (
     projectId: string,
-    type: OutlineNodeType,
-    title: string,
-    parentId?: string | null
+    options: CreateOutlineNodeOptions
   ) => Promise<OutlineNode>;
   updateOutlineNode: (id: string, updates: Partial<OutlineNode>) => void;
   deleteOutlineNode: (id: string) => Promise<void>;
@@ -35,7 +40,8 @@ export const createOutlineSlice: StateCreator<
     set({ isLoadingOutline: false });
   },
 
-  createOutlineNode: async (projectId, type, title, parentId = null) => {
+  createOutlineNode: async (projectId, options) => {
+    const { title, type, parentId = null, description = '' } = options;
     const now = new Date();
     const { outlineNodes } = get();
     const siblings = outlineNodes.filter(
@@ -48,7 +54,7 @@ export const createOutlineSlice: StateCreator<
       parentId,
       type,
       title,
-      description: '',
+      description,
       sortOrder: siblings.length,
       linkedDocumentIds: [],
       linkedSectionIds: [],
