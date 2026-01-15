@@ -1,0 +1,17 @@
+[2026-01-15 07:47:48] [ERROR] tmux is not installed. Please install tmux or run without --monitor flag.
+[2026-01-15 07:48:27] [INFO] Setting up tmux session: ralph-1768481307
+[2026-01-15 07:48:27] [SUCCESS] Tmux session created. Attaching to session...
+[2026-01-15 07:48:27] [INFO] Use Ctrl+B then D to detach from session
+[2026-01-15 07:48:27] [INFO] Use 'tmux attach -t ralph-1768481307' to reattach
+[2026-01-15 07:48:28] [SUCCESS] 🚀 Ralph loop starting with Claude Code
+[2026-01-15 07:48:28] [INFO] Max calls per hour: 100
+[2026-01-15 07:48:28] [INFO] Logs: logs/ | Docs: docs/generated/ | Status: status.json
+[2026-01-15 07:48:28] [ERROR] Prompt file 'PROMPT.md' not found!
+[2026-01-15 07:51:57] [INFO] Setting up tmux session: ralph-1768481517
+[2026-01-15 07:51:57] [SUCCESS] Tmux session created. Attaching to session...
+[2026-01-15 07:51:57] [INFO] Use Ctrl+B then D to detach from session
+[2026-01-15 07:51:57] [INFO] Use 'tmux attach -t ralph-1768481517' to reattach
+[2026-01-15 07:51:57] [SUCCESS] 🚀 Ralph loop starting with Claude Code
+[2026-01-15 07:51:57] [INFO] Max calls per hour: 100
+[2026-01-15 07:51:57] [INFO] Logs: logs/ | Docs: docs/generated/ | Status: status.json
+[2026-01-15 07:51:57] [ERROR] Prompt file 'PROMPT.md' not found!
