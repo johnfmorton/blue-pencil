@@ -34,6 +34,13 @@ export const useCharacters = () => useStore((state) => state.characters);
 export const useAIContext = () => useStore((state) => state.aiContext);
 export const useEditorUI = () => useStore((state) => state.editorUI);
 export const useEditorConfig = () => useStore((state) => state.editorConfig);
+export const useContextPanelState = () =>
+  useStore((state) => ({
+    isOpen: state.editorUI.isContextPanelOpen,
+    isPinned: state.editorUI.isContextPanelPinned,
+  }));
+export const useProjectSettings = () =>
+  useStore((state) => state.activeProject?.settings ?? null);
 
 // Export slice types
 export type {

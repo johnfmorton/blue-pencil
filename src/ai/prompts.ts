@@ -1,8 +1,10 @@
 import type { AIMode, AIRequest } from './types';
-import type { AIContextSnapshot, Character, OutlineNode } from '../types';
+import type { AIContextSnapshot, Character, OutlineNode, ProjectSettings } from '../types';
 
 // System prompts for different AI modes
 export const SYSTEM_PROMPTS: Record<AIMode, string> = {
+  learn: `You are a manuscript analyst. Analyze the provided text and extract structured project context as JSON. Return ONLY valid JSON with no explanation or markdown fences.`,
+
   editor: `You are an expert fiction editor working with an author on their manuscript. Your role is to provide:
 - Grammar, spelling, and punctuation corrections
 - Style and prose quality improvements
@@ -35,12 +37,24 @@ Be supportive but challenge the author to grow. Ask thought-provoking questions 
 };
 
 // Build context section for prompts
-export function buildContextSection(context: AIContextSnapshot): string {
+export function buildContextSection(context: AIContextSnapshot, projectSettings?: ProjectSettings): string {
   const sections: string[] = [];
 
   // Project summary
   if (context.projectSummary) {
     sections.push(`## Project Overview\n${context.projectSummary}`);
+  }
+
+  // Project metadata from settings
+  if (projectSettings) {
+    const meta: string[] = [];
+    if (projectSettings.genre) meta.push(`- Genre: ${projectSettings.genre}`);
+    if (projectSettings.tone) meta.push(`- Tone: ${projectSettings.tone}`);
+    if (projectSettings.setting) meta.push(`- Setting: ${projectSettings.setting}`);
+    if (projectSettings.themes) meta.push(`- Themes: ${projectSettings.themes}`);
+    if (meta.length > 0) {
+      sections.push(`## Project Details\n${meta.join('\n')}`);
+    }
   }
 
   // Current document summary
@@ -129,13 +143,14 @@ export function buildOutlineContext(nodes: OutlineNode[]): string {
 export function buildPrompt(
   request: AIRequest,
   characters: Character[] = [],
-  outlineNodes: OutlineNode[] = []
+  outlineNodes: OutlineNode[] = [],
+  projectSettings?: ProjectSettings
 ): string {
   const parts: string[] = [];
 
   // Context section
   parts.push('# Project Context');
-  parts.push(buildContextSection(request.context));
+  parts.push(buildContextSection(request.context, projectSettings));
 
   // Character context
   const charContext = buildCharacterContext(characters);
@@ -168,7 +183,8 @@ export function buildPrompt(
 export function buildMessages(
   request: AIRequest,
   characters: Character[] = [],
-  outlineNodes: OutlineNode[] = []
+  outlineNodes: OutlineNode[] = [],
+  projectSettings?: ProjectSettings
 ): Array<{ role: 'system' | 'user' | 'assistant'; content: string }> {
   const messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }> = [];
 
@@ -193,7 +209,7 @@ export function buildMessages(
   // Current user message with context
   messages.push({
     role: 'user',
-    content: buildPrompt(request, characters, outlineNodes),
+    content: buildPrompt(request, characters, outlineNodes, projectSettings),
   });
 
   return messages;

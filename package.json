@@ -25,7 +25,7 @@
     "@handlewithcare/react-prosemirror": "^2.0.0",
     "@anthropic-ai/sdk": "^0.30.0",
     "nanoid": "^5.0.7",
-    "wa-sqlite": "^0.9.16"
+    "wa-sqlite": "^1.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",

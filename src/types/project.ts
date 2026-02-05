@@ -11,6 +11,12 @@ export interface ProjectSettings {
   defaultAIModel: string;
   autoSaveInterval: number;
   contextUpdateDebounce: number;
+  genre?: string;
+  tone?: string;
+  setting?: string;
+  themes?: string;
+  targetLength?: number;
+  targetFormat?: string;
 }
 
 export interface Document {

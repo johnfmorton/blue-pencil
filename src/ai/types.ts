@@ -2,7 +2,7 @@ import type { AIContextSnapshot } from '../types';
 
 export type AIProvider = 'anthropic' | 'openai';
 
-export type AIMode = 'editor' | 'coach';
+export type AIMode = 'editor' | 'coach' | 'learn';
 
 export interface AISettings {
   provider: AIProvider;

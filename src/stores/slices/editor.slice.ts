@@ -9,6 +9,10 @@ export interface EditorSlice {
   setEditorConfig: (updates: Partial<EditorConfig>) => void;
   toggleSidebar: () => void;
   toggleFocusMode: () => void;
+  toggleContextPanel: () => void;
+  openContextPanel: () => void;
+  closeContextPanel: () => void;
+  setContextPanelPinned: (pinned: boolean) => void;
 }
 
 const defaultUIState: EditorUIState = {
@@ -19,6 +23,8 @@ const defaultUIState: EditorUIState = {
   zoom: 100,
   showWordCount: true,
   focusMode: false,
+  isContextPanelOpen: false,
+  isContextPanelPinned: false,
 };
 
 const defaultConfig: EditorConfig = {
@@ -53,7 +59,12 @@ export const createEditorSlice: StateCreator<
 
   toggleSidebar: () => {
     set((state) => ({
-      editorUI: { ...state.editorUI, isSidebarOpen: !state.editorUI.isSidebarOpen },
+      editorUI: {
+        ...state.editorUI,
+        isSidebarOpen: !state.editorUI.isSidebarOpen,
+        // Close context panel when opening sidebar
+        isContextPanelOpen: !state.editorUI.isSidebarOpen ? false : state.editorUI.isContextPanelOpen,
+      },
     }));
   },
 
@@ -63,7 +74,42 @@ export const createEditorSlice: StateCreator<
         ...state.editorUI,
         focusMode: !state.editorUI.focusMode,
         isSidebarOpen: state.editorUI.focusMode ? true : false,
+        // Close context panel when entering focus mode
+        isContextPanelOpen: state.editorUI.focusMode ? state.editorUI.isContextPanelOpen : false,
       },
+    }));
+  },
+
+  toggleContextPanel: () => {
+    set((state) => ({
+      editorUI: {
+        ...state.editorUI,
+        isContextPanelOpen: !state.editorUI.isContextPanelOpen,
+        // Close sidebar when opening context panel
+        isSidebarOpen: !state.editorUI.isContextPanelOpen ? false : state.editorUI.isSidebarOpen,
+      },
+    }));
+  },
+
+  openContextPanel: () => {
+    set((state) => ({
+      editorUI: {
+        ...state.editorUI,
+        isContextPanelOpen: true,
+        isSidebarOpen: false,
+      },
+    }));
+  },
+
+  closeContextPanel: () => {
+    set((state) => ({
+      editorUI: { ...state.editorUI, isContextPanelOpen: false },
+    }));
+  },
+
+  setContextPanelPinned: (pinned) => {
+    set((state) => ({
+      editorUI: { ...state.editorUI, isContextPanelPinned: pinned },
     }));
   },
 });

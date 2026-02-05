@@ -5,15 +5,27 @@ export function WelcomeScreen() {
   const [projectName, setProjectName] = useState('');
   const [isCreating, setIsCreating] = useState(false);
   const createProject = useStore((state) => state.createProject);
+  const createDocument = useStore((state) => state.createDocument);
+  const openContextPanel = useStore((state) => state.openContextPanel);
   const projects = useStore((state) => state.projects);
   const setActiveProject = useStore((state) => state.setActiveProject);
 
-  const handleCreateProject = async (e: React.FormEvent) => {
+  const handleStartWriting = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!projectName.trim()) return;
 
     setIsCreating(true);
+    const project = await createProject(projectName.trim());
+    await createDocument(project.id, 'Untitled');
+    setIsCreating(false);
+  };
+
+  const handleSetUpProject = async () => {
+    if (!projectName.trim()) return;
+
+    setIsCreating(true);
     await createProject(projectName.trim());
+    openContextPanel();
     setIsCreating(false);
   };
 
@@ -26,7 +38,7 @@ export function WelcomeScreen() {
         </p>
 
         <div className="welcome-actions">
-          <form onSubmit={handleCreateProject} className="create-project-form">
+          <form onSubmit={handleStartWriting} className="create-project-form">
             <input
               type="text"
               value={projectName}
@@ -35,14 +47,25 @@ export function WelcomeScreen() {
               className="project-name-input"
               autoFocus
             />
+          </form>
+          <div className="create-project-actions">
             <button
-              type="submit"
+              type="button"
               disabled={!projectName.trim() || isCreating}
               className="create-button"
+              onClick={handleStartWriting as unknown as React.MouseEventHandler}
             >
-              {isCreating ? 'Creating...' : 'Create New Project'}
+              {isCreating ? 'Creating...' : 'Start Writing'}
             </button>
-          </form>
+            <button
+              type="button"
+              disabled={!projectName.trim() || isCreating}
+              className="create-button-secondary"
+              onClick={handleSetUpProject}
+            >
+              Set Up Project First
+            </button>
+          </div>
 
           {projects.length > 0 && (
             <div className="recent-projects">

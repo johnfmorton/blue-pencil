@@ -37,6 +37,8 @@ export interface EditorUIState {
   zoom: number;
   showWordCount: boolean;
   focusMode: boolean;
+  isContextPanelOpen: boolean;
+  isContextPanelPinned: boolean;
 }
 
 export interface EditorConfig {

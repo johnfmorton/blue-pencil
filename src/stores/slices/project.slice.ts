@@ -10,6 +10,7 @@ export interface ProjectSlice {
   loadProjects: () => Promise<void>;
   createProject: (name: string, description?: string) => Promise<Project>;
   updateProject: (id: string, updates: Partial<Project>) => void;
+  updateProjectSettings: (id: string, settings: Partial<ProjectSettings>) => void;
   deleteProject: (id: string) => Promise<void>;
   setActiveProject: (id: string | null) => void;
 }
@@ -65,6 +66,15 @@ export const createProjectSlice: StateCreator<
           ? { ...state.activeProject, ...updates, updatedAt: new Date() }
           : state.activeProject,
     }));
+  },
+
+  updateProjectSettings: (id, settings) => {
+    const state = get();
+    const project = state.projects.find((p) => p.id === id);
+    if (!project) return;
+
+    const merged = { ...project.settings, ...settings };
+    state.updateProject(id, { settings: merged });
   },
 
   deleteProject: async (id) => {
