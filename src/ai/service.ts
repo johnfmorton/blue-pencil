@@ -18,6 +18,8 @@ const DEFAULT_SETTINGS: AISettings = {
   temperature: 0.7,
 };
 
+const API_KEY_STORAGE_KEY = 'blue-pencil-api-key';
+
 // Citation regex patterns
 const CITATION_PATTERNS = {
   document: /\[doc:([a-zA-Z0-9_-]+)\]/g,
@@ -109,12 +111,39 @@ export class AIService {
 
   constructor(settings: Partial<AISettings> = {}) {
     this.settings = { ...DEFAULT_SETTINGS, ...settings };
+    this.loadApiKey();
   }
 
   updateSettings(settings: Partial<AISettings>): void {
     this.settings = { ...this.settings, ...settings };
     // Reset clients when settings change
     this.anthropicClient = null;
+    if (settings.apiKey !== undefined) {
+      this.saveApiKey(settings.apiKey);
+    }
+  }
+
+  private loadApiKey(): void {
+    try {
+      const stored = localStorage.getItem(API_KEY_STORAGE_KEY);
+      if (stored && !this.settings.apiKey) {
+        this.settings.apiKey = stored;
+      }
+    } catch {
+      // localStorage may be unavailable
+    }
+  }
+
+  private saveApiKey(key: string): void {
+    try {
+      if (key) {
+        localStorage.setItem(API_KEY_STORAGE_KEY, key);
+      } else {
+        localStorage.removeItem(API_KEY_STORAGE_KEY);
+      }
+    } catch {
+      // localStorage may be unavailable
+    }
   }
 
   getSettings(): AISettings {
