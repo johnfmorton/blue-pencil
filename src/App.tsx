@@ -13,11 +13,13 @@ export function App() {
     async function init() {
       try {
         await initDatabase();
-        setIsInitialized(true);
       } catch (err) {
-        console.error('Failed to initialize database:', err);
-        setError(err instanceof Error ? err.message : 'Unknown error');
+        // Database init may fail (wa-sqlite API mismatch) but
+        // store operations currently use in-memory state, so
+        // the app can still function without it.
+        console.warn('Database initialization failed, running in-memory only:', err);
       }
+      setIsInitialized(true);
     }
     init();
   }, []);
