@@ -425,6 +425,21 @@ ul, ol {
   color: rgba(255, 255, 255, 0.7);
 }
 
+.rename-form {
+  flex: 1;
+}
+
+.rename-input {
+  width: 100%;
+  padding: 7px 11px;
+  font-size: var(--font-size-sm);
+  border: 1px solid var(--color-primary);
+  border-radius: var(--border-radius);
+  background: var(--color-bg);
+  color: var(--color-text);
+  outline: none;
+}
+
 .delete-button {
   width: 24px;
   height: 24px;
@@ -1516,4 +1531,49 @@ ul, ol {
 .learn-discard:hover {
   background: var(--color-error);
   color: white;
+}
+
+/* Export Button (Header) */
+.header-export-button {
+  margin-left: auto;
+  padding: 4px 12px;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  border-radius: var(--border-radius);
+  transition: all var(--transition-fast);
+}
+
+.header-export-button:hover {
+  background: var(--color-bg-tertiary);
+  color: var(--color-text);
+}
+
+/* Import Button (Welcome Screen) */
+.import-project-section {
+  margin-bottom: 32px;
+}
+
+.import-file-input {
+  display: none;
+}
+
+.import-button {
+  padding: 10px 24px;
+  background: transparent;
+  color: var(--color-text-secondary);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-sm);
+  transition: all var(--transition-fast);
+}
+
+.import-button:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.import-error {
+  color: var(--color-error);
+  font-size: var(--font-size-xs);
+  margin-top: 8px;
 }

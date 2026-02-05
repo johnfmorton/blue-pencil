@@ -1,14 +1,18 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useStore } from '../stores';
+import { parseProjectFile, prepareImport } from '../utils/project-io';
 
 export function WelcomeScreen() {
   const [projectName, setProjectName] = useState('');
   const [isCreating, setIsCreating] = useState(false);
+  const [importError, setImportError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const createProject = useStore((state) => state.createProject);
   const createDocument = useStore((state) => state.createDocument);
   const openContextPanel = useStore((state) => state.openContextPanel);
   const projects = useStore((state) => state.projects);
   const setActiveProject = useStore((state) => state.setActiveProject);
+  const importProjectData = useStore((state) => state.importProjectData);
 
   const handleStartWriting = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,6 +22,26 @@ export function WelcomeScreen() {
     const project = await createProject(projectName.trim());
     await createDocument(project.id, 'Untitled');
     setIsCreating(false);
+  };
+
+  const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setImportError(null);
+    try {
+      const raw = await parseProjectFile(file);
+      const existingIds = projects.map((p) => p.id);
+      const prepared = prepareImport(raw, existingIds);
+      importProjectData(prepared);
+    } catch (err) {
+      setImportError(err instanceof Error ? err.message : 'Failed to import project.');
+    }
+
+    // Reset the input so the same file can be re-selected
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   const handleSetUpProject = async () => {
@@ -65,6 +89,26 @@ export function WelcomeScreen() {
             >
               Set Up Project First
             </button>
+          </div>
+
+          <div className="import-project-section">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".json"
+              onChange={handleImport}
+              className="import-file-input"
+            />
+            <button
+              type="button"
+              className="import-button"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              Import Project
+            </button>
+            {importError && (
+              <p className="import-error">{importError}</p>
+            )}
           </div>
 
           {projects.length > 0 && (

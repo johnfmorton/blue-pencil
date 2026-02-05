@@ -1,6 +1,7 @@
 import type { StateCreator } from 'zustand';
 import type { Project, ProjectSettings } from '../../types';
 import { generateId } from '../../utils/id';
+import type { ProjectExport } from '../../utils/project-io';
 
 export interface ProjectSlice {
   projects: Project[];
@@ -13,6 +14,7 @@ export interface ProjectSlice {
   updateProjectSettings: (id: string, settings: Partial<ProjectSettings>) => void;
   deleteProject: (id: string) => Promise<void>;
   setActiveProject: (id: string | null) => void;
+  importProjectData: (data: ProjectExport) => void;
 }
 
 const defaultSettings: ProjectSettings = {
@@ -88,6 +90,23 @@ export const createProjectSlice: StateCreator<
   setActiveProject: (id) => {
     set((state) => ({
       activeProject: id ? state.projects.find((p) => p.id === id) ?? null : null,
+    }));
+  },
+
+  importProjectData: (data) => {
+    const firstDoc = data.documents.length > 0
+      ? [...data.documents].sort((a, b) => a.sortOrder - b.sortOrder)[0]
+      : null;
+
+    // Cast to allow setting fields from other slices (all merged in the combined store)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (set as any)((state: any) => ({
+      projects: [...state.projects, data.project],
+      documents: [...state.documents, ...data.documents],
+      outlineNodes: [...state.outlineNodes, ...data.outlineNodes],
+      characters: [...state.characters, ...data.characters],
+      activeProject: data.project,
+      activeDocument: firstDoc,
     }));
   },
 });

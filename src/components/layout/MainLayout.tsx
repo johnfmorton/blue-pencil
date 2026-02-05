@@ -3,11 +3,18 @@ import { Sidebar } from './Sidebar';
 import { EditorArea } from '../editor/EditorArea';
 import { StatusBar } from './StatusBar';
 import { ContextPanel } from '../context/ContextPanel';
+import { exportProject } from '../../utils/project-io';
 
 export function MainLayout() {
   const editorUI = useStore((state) => state.editorUI);
   const toggleSidebar = useStore((state) => state.toggleSidebar);
   const closeContextPanel = useStore((state) => state.closeContextPanel);
+  const activeProject = useStore((state) => state.activeProject);
+
+  const handleExport = () => {
+    if (!activeProject) return;
+    exportProject(activeProject.id, useStore.getState());
+  };
 
   const showContextPinned =
     editorUI.isContextPanelOpen && editorUI.isContextPanelPinned;
@@ -25,6 +32,11 @@ export function MainLayout() {
           <span className="hamburger-icon" />
         </button>
         <h1 className="app-title">Blue Pencil</h1>
+        {activeProject && (
+          <button className="header-export-button" onClick={handleExport}>
+            Export
+          </button>
+        )}
       </header>
 
       <div className="main-content">
